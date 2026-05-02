@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">AI creator studio listing builder</title>
+  <desc id="desc">A creator studio interface with product brief fields, generated listing analysis, score, and tags.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#100b18"/>
+      <stop offset=".48" stop-color="#050505"/>
+      <stop offset="1" stop-color="#151008"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9f72db"/>
+      <stop offset=".45" stop-color="#f0d2a0"/>
+      <stop offset="1" stop-color="#6e95ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="820" fill="url(#bg)"/>
+  <circle cx="1050" cy="220" r="260" fill="#9f72db" opacity=".12"/>
+  <circle cx="360" cy="620" r="260" fill="#d7a65f" opacity=".08"/>
+  <g opacity=".1" stroke="#fff">
+    <path d="M0 130h1400M0 260h1400M0 390h1400M0 520h1400M0 650h1400M0 780h1400"/>
+    <path d="M160 0v820M320 0v820M480 0v820M640 0v820M800 0v820M960 0v820M1120 0v820M1280 0v820"/>
+  </g>
+  <g transform="translate(90 78)">
+    <rect width="1220" height="664" rx="34" fill="#050505" opacity=".86" stroke="#fff" stroke-opacity=".13"/>
+    <g transform="translate(52 54)">
+      <rect width="522" height="544" rx="28" fill="#080707" stroke="#fff" stroke-opacity=".13"/>
+      <rect x="34" y="36" width="132" height="16" rx="8" fill="#d7a65f" opacity=".62"/>
+      <rect x="34" y="78" width="348" height="38" rx="13" fill="#fff7e8" opacity=".84"/>
+      <rect x="34" y="146" width="454" height="168" rx="20" fill="#020202" stroke="#fff" stroke-opacity=".12"/>
+      <rect x="62" y="178" width="310" height="14" rx="7" fill="#fff" opacity=".28"/>
+      <rect x="62" y="210" width="380" height="14" rx="7" fill="#fff" opacity=".18"/>
+      <rect x="62" y="242" width="330" height="14" rx="7" fill="#fff" opacity=".18"/>
+      <g transform="translate(34 344)">
+        <rect width="214" height="70" rx="18" fill="#111015" stroke="#fff" stroke-opacity=".12"/>
+        <rect x="22" y="18" width="126" height="12" rx="6" fill="#fff" opacity=".22"/>
+        <rect x="22" y="42" width="152" height="14" rx="7" fill="#fff7e8" opacity=".58"/>
+        <rect x="240" width="214" height="70" rx="18" fill="#111015" stroke="#fff" stroke-opacity=".12"/>
+        <rect x="262" y="18" width="112" height="12" rx="6" fill="#fff" opacity=".22"/>
+        <rect x="262" y="42" width="128" height="14" rx="7" fill="#fff7e8" opacity=".58"/>
+      </g>
+      <g transform="translate(34 444)">
+        <rect width="214" height="52" rx="18" fill="#d7a65f" opacity=".16" stroke="#d7a65f" stroke-opacity=".36"/>
+        <rect x="30" y="19" width="142" height="14" rx="7" fill="#fff7e8" opacity=".7"/>
+        <rect x="240" width="168" height="52" rx="18" fill="#ffffff" opacity=".05" stroke="#fff" stroke-opacity=".14"/>
+        <rect x="270" y="19" width="88" height="14" rx="7" fill="#fff" opacity=".42"/>
+      </g>
+    </g>
+    <g transform="translate(628 54)">
+      <rect width="540" height="544" rx="28" fill="#080707" stroke="#fff" stroke-opacity=".13"/>
+      <rect x="34" y="36" width="124" height="16" rx="8" fill="#d7a65f" opacity=".62"/>
+      <rect x="34" y="78" width="276" height="38" rx="13" fill="#fff7e8" opacity=".84"/>
+      <rect x="404" y="48" width="82" height="82" rx="18" fill="#000" stroke="#fff" stroke-opacity=".13"/>
+      <text x="445" y="105" fill="#fff7e8" font-family="Arial, sans-serif" font-size="42" text-anchor="middle">82</text>
+      <path d="M34 158h472" stroke="#fff" stroke-opacity=".13" stroke-width="2"/>
+      <g transform="translate(34 192)">
+        <rect width="472" height="74" rx="18" fill="#020202" stroke="#fff" stroke-opacity=".12"/>
+        <rect x="22" y="18" width="120" height="12" rx="6" fill="#fff" opacity=".22"/>
+        <rect x="22" y="42" width="308" height="16" rx="8" fill="#fff7e8" opacity=".65"/>
+      </g>
+      <g transform="translate(34 292)">
+        <rect width="472" height="82" rx="18" fill="#020202" stroke="#fff" stroke-opacity=".12"/>
+        <rect x="22" y="18" width="154" height="12" rx="6" fill="#fff" opacity=".22"/>
+        <rect x="22" y="44" width="398" height="14" rx="7" fill="#fff7e8" opacity=".44"/>
+      </g>
+      <g transform="translate(34 402)">
+        <rect width="90" height="36" rx="18" fill="#9f72db" opacity=".2" stroke="#9f72db" stroke-opacity=".38"/>
+        <rect x="110" width="112" height="36" rx="18" fill="#d7a65f" opacity=".17" stroke="#d7a65f" stroke-opacity=".34"/>
+        <rect x="242" width="118" height="36" rx="18" fill="#6e95ff" opacity=".17" stroke="#6e95ff" stroke-opacity=".34"/>
+        <rect x="380" width="88" height="36" rx="18" fill="#fff" opacity=".06" stroke="#fff" stroke-opacity=".14"/>
+      </g>
+      <path d="M54 490h430" stroke="url(#accent)" stroke-width="4" stroke-linecap="round" opacity=".76"/>
+    </g>
+  </g>
+</svg>

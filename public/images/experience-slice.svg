@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">AI capability experience console</title>
+  <desc id="desc">A trial console showing input, analysis progress, confidence score, and output cards.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080b13"/>
+      <stop offset=".45" stop-color="#050506"/>
+      <stop offset="1" stop-color="#101512"/>
+    </linearGradient>
+    <linearGradient id="flow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#d58c4a"/>
+      <stop offset=".5" stop-color="#f6ead4"/>
+      <stop offset="1" stop-color="#7ea4ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="820" fill="url(#bg)"/>
+  <circle cx="1090" cy="230" r="280" fill="#6f95ff" opacity=".11"/>
+  <circle cx="310" cy="520" r="250" fill="#d58c4a" opacity=".09"/>
+  <g opacity=".11" stroke="#fff">
+    <path d="M120 96h1160M120 188h1160M120 280h1160M120 372h1160M120 464h1160M120 556h1160M120 648h1160M120 740h1160"/>
+    <path d="M154 60v700M338 60v700M522 60v700M706 60v700M890 60v700M1074 60v700M1258 60v700"/>
+  </g>
+  <g transform="translate(90 76)">
+    <rect width="1220" height="668" rx="34" fill="#040505" opacity=".86" stroke="#fff" stroke-opacity=".13"/>
+    <g transform="translate(54 50)">
+      <rect width="448" height="548" rx="28" fill="#080808" stroke="#fff" stroke-opacity=".12"/>
+      <rect x="34" y="36" width="116" height="16" rx="8" fill="#d7a65f" opacity=".62"/>
+      <rect x="34" y="78" width="310" height="38" rx="13" fill="#fff7e8" opacity=".82"/>
+      <rect x="34" y="138" width="348" height="16" rx="8" fill="#fff" opacity=".28"/>
+      <rect x="34" y="166" width="300" height="16" rx="8" fill="#fff" opacity=".17"/>
+      <g transform="translate(34 230)">
+        <rect width="380" height="78" rx="18" fill="#101010" stroke="#fff" stroke-opacity=".13"/>
+        <rect x="24" y="22" width="84" height="16" rx="8" fill="#d58c4a" opacity=".78"/>
+        <rect x="24" y="50" width="260" height="12" rx="6" fill="#fff" opacity=".24"/>
+      </g>
+      <g transform="translate(34 330)">
+        <rect width="380" height="78" rx="18" fill="#101010" stroke="#fff" stroke-opacity=".13"/>
+        <rect x="24" y="22" width="100" height="16" rx="8" fill="#d7a65f" opacity=".78"/>
+        <rect x="24" y="50" width="285" height="12" rx="6" fill="#fff" opacity=".24"/>
+      </g>
+      <g transform="translate(34 430)">
+        <rect width="380" height="78" rx="18" fill="#101010" stroke="#fff" stroke-opacity=".13"/>
+        <rect x="24" y="22" width="86" height="16" rx="8" fill="#7ea4ff" opacity=".78"/>
+        <rect x="24" y="50" width="245" height="12" rx="6" fill="#fff" opacity=".24"/>
+      </g>
+    </g>
+    <g transform="translate(558 50)">
+      <rect width="608" height="548" rx="28" fill="#080808" stroke="#fff" stroke-opacity=".12"/>
+      <rect x="34" y="36" width="126" height="16" rx="8" fill="#7ea4ff" opacity=".66"/>
+      <rect x="34" y="74" width="360" height="34" rx="13" fill="#fff7e8" opacity=".82"/>
+      <rect x="34" y="140" width="540" height="142" rx="22" fill="#020202" stroke="#fff" stroke-opacity=".12"/>
+      <rect x="60" y="166" width="410" height="16" rx="8" fill="#fff" opacity=".34"/>
+      <rect x="60" y="198" width="460" height="12" rx="6" fill="#fff" opacity=".16"/>
+      <rect x="60" y="226" width="300" height="12" rx="6" fill="#fff" opacity=".16"/>
+      <path d="M60 314h476" stroke="#fff" stroke-opacity=".13" stroke-width="2"/>
+      <path d="M60 314h282" stroke="url(#flow)" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="342" cy="314" r="12" fill="#fff7e8"/>
+      <g transform="translate(34 354)">
+        <rect width="540" height="154" rx="22" fill="#0c0d10" stroke="#7ea4ff" stroke-opacity=".22"/>
+        <circle cx="80" cy="78" r="46" fill="none" stroke="#7ea4ff" stroke-width="10" opacity=".72"/>
+        <text x="80" y="91" fill="#fff7e8" font-family="Arial, sans-serif" font-size="42" text-anchor="middle">87</text>
+        <rect x="156" y="36" width="292" height="28" rx="10" fill="#fff7e8" opacity=".8"/>
+        <rect x="156" y="84" width="330" height="14" rx="7" fill="#fff" opacity=".22"/>
+        <rect x="156" y="114" width="230" height="14" rx="7" fill="#fff" opacity=".18"/>
+      </g>
+    </g>
+  </g>
+</svg>
