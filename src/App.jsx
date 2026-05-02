@@ -1,6 +1,23 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Plus, RotateCcw, Search, X } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  Bookmark,
+  Check,
+  CheckCircle2,
+  FileText,
+  MessageSquare,
+  Plus,
+  RotateCcw,
+  Search,
+  Send,
+  ShieldCheck,
+  ShoppingBag,
+  Upload,
+  X,
+} from "lucide-react";
 
 const scenes = [
   {
@@ -34,6 +51,86 @@ const marketSolutions = [
   ["02", "Intelligent Automation", "Streamline processes and decisions with autonomous AI agents and orchestration.", "Automation", "Advanced"],
   ["03", "Natural Language Understanding", "Extract meaning and intent from text, documents, and conversations.", "Language", "Intermediate"],
   ["04", "Anomaly Detection", "Identify outliers and emerging patterns before they impact your business.", "Monitoring", "Intermediate"],
+];
+
+const experienceListing = {
+  id: "contract-risk-scanner",
+  title: "Contract Risk Scanner",
+  summary: "粘贴合同，查看风险条款、严重程度和修改建议。",
+  category: "Legal Ops",
+  tags: ["Contract Review", "Risk Scan", "Bilingual"],
+  targetUsers: ["创业团队", "采购负责人", "法务助理"],
+  useCases: ["供应商合同初筛", "服务协议复核", "付款条款检查"],
+  notFor: ["替代律师意见", "扫描版图片合同", "诉讼策略判断"],
+  requiredInputs: ["合同文本", "合同类型", "关注风险"],
+  outputs: ["风险条款", "严重程度", "修改建议"],
+  demoLimits: "免费试用最多处理 1,200 字。",
+  fitScore: 92,
+  fitCriteria: {
+    matches: ["需要快速发现合同风险", "合同文本可直接粘贴", "关注付款、违约、续约条款"],
+    gaps: ["不能替代正式法律意见", "图片扫描件需要先转文字"],
+    nextStep: "粘贴合同片段，优先选择你最关心的风险。",
+  },
+  pricingText: "$19 / scan",
+  creatorContact: "legalops@ai-market.demo",
+  demoOutputType: "risk-list",
+  demoFields: [
+    {
+      id: "contractText",
+      label: "合同文本",
+      type: "textarea",
+      required: true,
+      rows: 8,
+      placeholder: "粘贴合同核心条款，例如付款、违约、终止、续约、保密条款。",
+      defaultValue:
+        "供应商应在收到发票后 90 日内付款。若客户未提前 60 日书面通知，本协议将自动续约 12 个月。供应商可在服务中断时不承担间接损失责任。",
+    },
+    {
+      id: "contractType",
+      label: "合同类型",
+      type: "select",
+      options: ["供应商合同", "SaaS 服务协议", "采购协议", "保密协议"],
+      defaultValue: "供应商合同",
+    },
+    {
+      id: "focusAreas",
+      label: "关注风险",
+      type: "checkboxGroup",
+      options: ["付款周期", "自动续约", "责任限制", "数据隐私"],
+      defaultValue: ["付款周期", "自动续约", "责任限制"],
+    },
+    {
+      id: "referenceFile",
+      label: "合同附件",
+      type: "file",
+      accept: ".pdf,.doc,.docx,.txt",
+      placeholder: "上传合同文件",
+    },
+  ],
+};
+
+const fallbackListings = [
+  {
+    id: "vendor-security-checker",
+    title: "Vendor Security Checker",
+    category: "Security",
+    summary: "检查供应商安全问卷、隐私条款和数据处理风险。",
+    tags: ["Vendor Review", "Privacy", "Security"],
+  },
+  {
+    id: "invoice-dispute-assistant",
+    title: "Invoice Dispute Assistant",
+    category: "Finance Ops",
+    summary: "整理发票争议、付款证据和对账回复。",
+    tags: ["Invoice", "Dispute", "Operations"],
+  },
+  {
+    id: "policy-redline-agent",
+    title: "Policy Redline Agent",
+    category: "Legal Ops",
+    summary: "对比政策文本，标出冲突条款和修改优先级。",
+    tags: ["Policy", "Redline", "Compliance"],
+  },
 ];
 
 export default function AICapabilityMarketExperience() {
@@ -318,35 +415,137 @@ function MarketPage({ onBack }) {
 }
 
 function ExperiencePage({ onBack }) {
+  const listing = experienceListing;
+  const [need, setNeed] = useState("我需要快速检查供应商合同里的付款、自动续约和责任限制风险。");
+  const [demoValues, setDemoValues] = useState(() => getInitialDemoValues(listing.demoFields));
+  const [demoResult, setDemoResult] = useState(null);
+  const [feedback, setFeedback] = useState("");
+  const [recommendations, setRecommendations] = useState([]);
+  const [status, setStatus] = useState("");
+
+  const runDemo = () => {
+    setDemoResult(createMockDemoResult(listing, demoValues));
+    setStatus("已生成风险条款");
+  };
+
+  const resetDemo = () => {
+    setDemoValues(getInitialDemoValues(listing.demoFields));
+    setDemoResult(null);
+    setFeedback("");
+    setRecommendations([]);
+    setStatus("");
+  };
+
+  const submitFeedback = () => {
+    if (!feedback.trim()) return;
+    setRecommendations(createMockRecommendations(feedback));
+    setStatus("已换一组工具");
+  };
+
+  const contactCreator = () => setStatus(`已发送给 ${listing.creatorContact}`);
+  const mockPurchase = () => setStatus("模拟购买已完成");
+
   return (
     <PageShell onBack={onBack} label="Experience Page" tone="blue">
-      <section className="relative overflow-hidden border-b border-white/8 pb-12 text-center">
+      <section className="relative overflow-hidden border-b border-white/8 pb-12">
         <div className="pointer-events-none absolute left-0 top-[36%] h-px w-[42%] bg-gradient-to-r from-transparent via-[#d7924e]/80 to-transparent" />
         <div className="pointer-events-none absolute right-0 top-[36%] h-px w-[42%] bg-gradient-to-l from-transparent via-[#7297e8]/80 to-transparent" />
-        <p className="mb-5 text-[11px] uppercase tracking-[0.45em] text-[#d6a562]/85">PRODUCT TRIAL SCENE</p>
-        <h1 className="font-serif text-[clamp(88px,13vw,220px)] leading-[0.86] tracking-[-0.075em] text-[#fff6ea]">Experience</h1>
-        <p className="mt-5 font-serif text-[clamp(20px,2.1vw,34px)] text-white/72">See it. Try it. Understand it.</p>
-        <div className="mx-auto mt-10 h-14 w-[420px] max-w-[80vw] rounded-full border border-white/10 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_65%)]" />
-      </section>
-
-      <section className="mt-12 grid grid-cols-1 gap-8 xl:grid-cols-[.85fr_1.3fr]">
-        <div className="border border-white/10 bg-white/[0.015] p-8">
-          <div className="border-b border-white/10 pb-7"><div className="text-sm uppercase tracking-[0.28em] text-[#d7b182]/85">Product capability</div><h2 className="mt-4 font-serif text-[clamp(34px,3vw,56px)] leading-tight">Predictive Intelligence</h2><p className="mt-4 max-w-[620px] text-[16px] leading-8 text-white/55">Forecast outcomes with confidence using advanced time-series, signals analysis, and causal models.</p></div>
-          <div className="divide-y divide-white/10">
-            {[["Input", "Provide the context, signals, or data you want the model to understand.", "text-[#e4bc85]"], ["Process", "Our models analyze patterns, relationships, and uncertainty to generate insight.", "text-[#d7b182]"], ["Output", "Receive a clear, actionable response with confidence you can trust.", "text-[#8eb0ff]"]].map(([title, desc, color]) => (
-              <div key={title} className="flex items-start justify-between gap-6 py-8"><div><h3 className={`font-serif text-[36px] leading-tight ${color}`}>{title}</h3><p className="mt-3 max-w-[500px] text-[15px] leading-7 text-white/52">{desc}</p></div><ArrowRight className="mt-3 h-5 w-5 shrink-0 text-white/30" /></div>
+        <div className="relative mx-auto max-w-[1180px] text-center">
+          <p className="mb-5 text-[11px] uppercase tracking-[0.45em] text-[#d6a562]/85">{listing.category}</p>
+          <h1 className="font-serif text-[clamp(58px,9.2vw,150px)] leading-[0.9] tracking-[-0.065em] text-[#fff6ea]">{listing.title}</h1>
+          <p className="mx-auto mt-6 max-w-[760px] font-serif text-[clamp(20px,2vw,32px)] leading-tight text-white/72">{listing.summary}</p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            {listing.tags.map((tag) => (
+              <span key={tag} className="border border-white/10 bg-black/25 px-4 py-2 text-sm text-white/62">{tag}</span>
             ))}
           </div>
-        </div>
-        <div className="border border-white/10 bg-white/[0.015] p-8">
-          <div className="mb-8 flex items-center justify-between"><div><div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Trial console</div><h3 className="mt-3 font-serif text-[clamp(28px,2vw,40px)]">Test the capability live</h3></div><button className="inline-flex items-center gap-2 text-white/40 transition hover:text-white"><RotateCcw className="h-4 w-4" />Reset</button></div>
-          <ConsoleTextarea />
-          <div className="mt-8 border border-white/10 px-5 py-6"><div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">Process</div><div className="mb-4 text-white/40">Analyzing patterns, relationships, and uncertainty...</div><div className="relative h-px bg-white/10"><div className="absolute left-0 top-0 h-px w-[54%] bg-gradient-to-r from-[#d58c4a] via-[#f2dfc5] to-[#78a0ff]" /><div className="absolute left-[53%] top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-white shadow-[0_0_20px_rgba(255,255,255,0.5)]" /></div></div>
-          <div className="mt-8 border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-6">
-            <div className="mb-5 text-[11px] uppercase tracking-[0.24em] text-[#7ea4ff]">Output</div>
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[180px_1fr]"><div><div className="grid h-24 w-24 place-items-center rounded-full border-4 border-[#7ea4ff]/55 text-[42px] font-light text-white">87</div><div className="mt-4 text-white/55">Confidence</div><div className="mt-1 font-serif text-[22px] text-[#fff6ea]">High</div></div><div><h4 className="font-serif text-[clamp(26px,2vw,40px)] leading-tight text-[#fff6ea]">Demand is projected to increase 24.6% next quarter, driven by seasonal uplift and sustainability demand.</h4><div className="mt-6 flex flex-wrap gap-3">{["Seasonality", "Sustainability trends", "Market growth"].map((tag) => <span key={tag} className="border border-white/10 px-3 py-2 text-sm text-white/60">{tag}</span>)}</div></div></div>
+          <div className="mx-auto mt-10 grid max-w-[900px] grid-cols-1 border border-white/10 bg-white/[0.015] sm:grid-cols-3">
+            <HeroMetric label="适配度" value={`${listing.fitScore}%`} />
+            <HeroMetric label="试用限制" value={listing.demoLimits} />
+            <HeroMetric label="价格" value={listing.pricingText} />
           </div>
         </div>
+      </section>
+
+      <section className="mt-12 grid grid-cols-1 gap-8 xl:grid-cols-[.86fr_1.14fr]">
+        <aside className="space-y-8">
+          <div className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
+            <div className="mb-7 flex items-start justify-between gap-6 border-b border-white/10 pb-7">
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Fit check</div>
+                <h2 className="mt-4 font-serif text-[clamp(32px,2.8vw,52px)] leading-tight">需求适配</h2>
+              </div>
+              <div className="grid h-24 w-24 shrink-0 place-items-center rounded-full border-4 border-[#7ea4ff]/55 text-[34px] font-light text-white shadow-[0_0_34px_rgba(126,164,255,0.12)]">{listing.fitScore}</div>
+            </div>
+
+            <label className="block">
+              <span className="text-[11px] uppercase tracking-[0.24em] text-white/35">你的需求</span>
+              <textarea
+                rows={4}
+                value={need}
+                onChange={(event) => setNeed(event.target.value)}
+                className="mt-4 w-full resize-none border border-white/10 bg-black/35 p-4 text-[15px] leading-7 text-white/82 outline-none placeholder:text-white/22 focus:border-[#7ea4ff]/45"
+                placeholder="写下你要检查的合同、行业和最担心的问题。"
+              />
+            </label>
+
+            <div className="mt-7 grid grid-cols-1 gap-4">
+              <FitBlock icon={<CheckCircle2 className="h-5 w-5" />} title="匹配" items={listing.fitCriteria.matches} tone="text-[#8eb0ff]" />
+              <FitBlock icon={<AlertTriangle className="h-5 w-5" />} title="留意" items={listing.fitCriteria.gaps} tone="text-[#e4bc85]" />
+              <div className="border border-white/10 bg-black/25 p-5">
+                <div className="mb-3 flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85"><ShieldCheck className="h-5 w-5" />试用方式</div>
+                <p className="text-[15px] leading-7 text-white/62">{listing.fitCriteria.nextStep}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-1">
+            <InfoList title="适合场景" items={listing.useCases} />
+            <InfoList title="输入要求" items={listing.requiredInputs} />
+            <InfoList title="主要输出" items={listing.outputs} />
+          </div>
+        </aside>
+
+        <section className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
+          <div className="mb-8 flex flex-col gap-5 border-b border-white/10 pb-7 md:flex-row md:items-start md:justify-between">
+            <div>
+              <div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Demo</div>
+              <h3 className="mt-3 font-serif text-[clamp(30px,2.4vw,46px)] leading-tight">粘贴合同，查看风险条款</h3>
+            </div>
+            <button onClick={resetDemo} className="inline-flex w-fit items-center gap-2 text-white/40 transition hover:text-white">
+              <RotateCcw className="h-4 w-4" />重置
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5">
+            {listing.demoFields.map((field) => (
+              <DemoField key={field.id} field={field} value={demoValues[field.id]} onChange={(value) => setDemoValues((current) => ({ ...current, [field.id]: value }))} />
+            ))}
+          </div>
+
+          <div className="mt-7 flex flex-wrap items-center gap-4">
+            <button onClick={runDemo} className="inline-flex items-center gap-3 border border-[#7ea4ff]/35 px-5 py-3 text-[#dce6ff] transition hover:border-[#7ea4ff]/70 hover:bg-white/[0.03]">
+              <FileText className="h-5 w-5" />查看风险条款
+            </button>
+            <button onClick={contactCreator} className="inline-flex items-center gap-3 border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">
+              <MessageSquare className="h-5 w-5" />联系创建者
+            </button>
+            <button onClick={mockPurchase} className="inline-flex items-center gap-3 border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">
+              <ShoppingBag className="h-5 w-5" />模拟购买
+            </button>
+          </div>
+
+          {status && <div className="mt-5 border border-white/10 bg-black/25 px-4 py-3 text-sm text-white/58">{status}</div>}
+
+          <DemoResult result={demoResult} />
+
+          <FeedbackPanel
+            feedback={feedback}
+            setFeedback={setFeedback}
+            onSubmit={submitFeedback}
+            recommendations={recommendations}
+          />
+        </section>
       </section>
     </PageShell>
   );
@@ -372,12 +571,300 @@ function Meta({ label, value, className = "" }) {
   return <div className={`pt-1 ${className}`}><div className="text-[11px] uppercase tracking-[0.24em] text-white/30">{label}</div><div className="mt-3 text-white/72">{value}</div></div>;
 }
 
-function ConsoleTextarea() {
-  return <div><div className="text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">Input</div><p className="mt-3 text-white/52">Describe your goal, question, or context.</p><div className="mt-4 border border-white/10 bg-black/35 p-5"><textarea rows={6} className="w-full resize-none bg-transparent text-[17px] leading-8 text-white/85 outline-none placeholder:text-white/25" placeholder="e.g., Forecast next quarter’s demand for eco-friendly packaging based on market trends and seasonality." /><div className="mt-4 flex flex-wrap gap-3">{["Add context", "Time range", "Advanced settings"].map((tag) => <button key={tag} className="border border-white/10 px-4 py-2 text-sm text-white/65 transition hover:bg-white/[0.03] hover:text-white">{tag}</button>)}</div></div></div>;
+function HeroMetric({ label, value }) {
+  return (
+    <div className="border-b border-white/10 p-5 text-center sm:border-b-0 sm:border-r sm:last:border-r-0">
+      <div className="text-[11px] uppercase tracking-[0.24em] text-white/32">{label}</div>
+      <div className="mt-3 font-serif text-[clamp(22px,2vw,34px)] leading-tight text-[#fff6ea]">{value}</div>
+    </div>
+  );
+}
+
+function FitBlock({ icon, title, items, tone }) {
+  return (
+    <div className="border border-white/10 bg-black/25 p-5">
+      <div className={`mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] ${tone}`}>{icon}{title}</div>
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div key={item} className="flex gap-3 text-[15px] leading-7 text-white/62">
+            <Check className="mt-1 h-4 w-4 shrink-0 text-white/32" />
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfoList({ title, items }) {
+  return (
+    <div className="border border-white/10 bg-white/[0.015] p-5">
+      <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">{title}</div>
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div key={item} className="border-l border-white/10 pl-4 text-[15px] leading-6 text-white/62">{item}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DemoField({ field, value, onChange }) {
+  const label = <div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-white/35">{field.label}</div>;
+
+  if (field.type === "textarea") {
+    return (
+      <label className="block border border-white/10 bg-black/35 p-5">
+        {label}
+        <textarea
+          rows={field.rows || 5}
+          value={value || ""}
+          onChange={(event) => onChange(event.target.value)}
+          className="w-full resize-none bg-transparent text-[16px] leading-8 text-white/85 outline-none placeholder:text-white/25"
+          placeholder={field.placeholder}
+        />
+      </label>
+    );
+  }
+
+  if (field.type === "select") {
+    return (
+      <label className="block border border-white/10 bg-black/25 p-5">
+        {label}
+        <select
+          value={value || ""}
+          onChange={(event) => onChange(event.target.value)}
+          className="w-full bg-transparent text-white/82 outline-none [&>option]:bg-[#080808]"
+        >
+          {field.options.map((option) => <option key={option}>{option}</option>)}
+        </select>
+      </label>
+    );
+  }
+
+  if (field.type === "checkboxGroup") {
+    const selected = Array.isArray(value) ? value : [];
+    return (
+      <div className="border border-white/10 bg-black/25 p-5">
+        {label}
+        <div className="flex flex-wrap gap-3">
+          {field.options.map((option) => {
+            const active = selected.includes(option);
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => onChange(active ? selected.filter((item) => item !== option) : [...selected, option])}
+                className={`border px-4 py-2 text-sm transition ${active ? "border-[#7ea4ff]/55 bg-[#7ea4ff]/10 text-white" : "border-white/10 text-white/58 hover:text-white"}`}
+              >
+                {option}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  if (field.type === "file") {
+    return (
+      <label className="block border border-dashed border-white/15 bg-black/20 p-5 transition hover:border-[#7ea4ff]/45">
+        {label}
+        <input
+          type="file"
+          accept={field.accept}
+          className="hidden"
+          onChange={(event) => onChange(event.target.files?.[0]?.name || "")}
+        />
+        <div className="flex items-center justify-between gap-4 text-white/58">
+          <span>{value || field.placeholder}</span>
+          <Upload className="h-5 w-5 shrink-0" />
+        </div>
+      </label>
+    );
+  }
+
+  return (
+    <label className="block border border-white/10 bg-black/25 p-5">
+      {label}
+      <input
+        value={value || ""}
+        onChange={(event) => onChange(event.target.value)}
+        className="w-full bg-transparent text-white/82 outline-none placeholder:text-white/22"
+        placeholder={field.placeholder}
+      />
+    </label>
+  );
+}
+
+function DemoResult({ result }) {
+  if (!result) {
+    return (
+      <div className="mt-8 border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.012))] p-6">
+        <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-[#7ea4ff]">结果</div>
+        <div className="font-serif text-[clamp(24px,2vw,36px)] leading-tight text-[#fff6ea]">点击查看风险条款</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8 border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.015))] p-6">
+      <div className="mb-6 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+        <div>
+          <div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-[#7ea4ff]">风险条款</div>
+          <h4 className="font-serif text-[clamp(26px,2.2vw,42px)] leading-tight text-[#fff6ea]">{result.headline}</h4>
+        </div>
+        <div className="grid h-24 w-24 shrink-0 place-items-center rounded-full border-4 border-[#7ea4ff]/55 text-[36px] font-light text-white">{result.confidence}</div>
+      </div>
+      <div className="space-y-4">
+        {result.risks.map((risk) => (
+          <div key={risk.title} className="grid grid-cols-1 gap-4 border border-white/10 bg-black/25 p-5 lg:grid-cols-[120px_1fr]">
+            <div>
+              <div className={`w-fit border px-3 py-1 text-xs uppercase tracking-[0.2em] ${risk.level === "High" ? "border-[#d58c4a]/45 text-[#e4bc85]" : "border-[#7ea4ff]/35 text-[#8eb0ff]"}`}>{risk.level}</div>
+              <div className="mt-3 text-sm text-white/35">{risk.clause}</div>
+            </div>
+            <div>
+              <div className="font-serif text-[26px] leading-tight text-[#fff6ea]">{risk.title}</div>
+              <p className="mt-3 text-[15px] leading-7 text-white/58">{risk.action}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <button className="inline-flex items-center gap-2 border border-white/10 px-4 py-2 text-sm text-white/62 transition hover:text-white">
+          <Bookmark className="h-4 w-4" />保存结果
+        </button>
+        <button className="inline-flex items-center gap-2 border border-white/10 px-4 py-2 text-sm text-white/62 transition hover:text-white">
+          <ShieldCheck className="h-4 w-4" />查看修改建议
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function FeedbackPanel({ feedback, setFeedback, onSubmit, recommendations }) {
+  return (
+    <div className="mt-8 border border-white/10 bg-black/25 p-6">
+      <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">反馈</div>
+      <textarea
+        rows={4}
+        value={feedback}
+        onChange={(event) => setFeedback(event.target.value)}
+        className="w-full resize-none border border-white/10 bg-black/35 p-4 text-[15px] leading-7 text-white/82 outline-none placeholder:text-white/24 focus:border-[#7ea4ff]/45"
+        placeholder="告诉我们哪里不合适，也可以写推荐很符合。"
+      />
+      <div className="mt-4 flex flex-wrap gap-3">
+        {["行业不匹配", "输出太浅", "需要处理文件", "推荐很符合"].map((item) => (
+          <button key={item} onClick={() => setFeedback((current) => current ? `${current}；${item}` : item)} className="border border-white/10 px-3 py-2 text-sm text-white/56 transition hover:text-white">{item}</button>
+        ))}
+      </div>
+      <button onClick={onSubmit} className="mt-5 inline-flex items-center gap-3 border border-[#7ea4ff]/35 px-5 py-3 text-[#dce6ff] transition hover:border-[#7ea4ff]/70 hover:bg-white/[0.03]">
+        <Send className="h-5 w-5" />换一个更匹配的工具
+      </button>
+
+      {recommendations.length > 0 && (
+        <div className="mt-7 border-t border-white/10 pt-6">
+          <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-[#7ea4ff]">新的推荐</div>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            {recommendations.map((item) => (
+              <div key={item.id} className="border border-white/10 bg-white/[0.015] p-4">
+                <div className="text-[11px] uppercase tracking-[0.2em] text-white/34">{item.category}</div>
+                <div className="mt-3 font-serif text-[24px] leading-tight text-[#fff6ea]">{item.title}</div>
+                <p className="mt-3 text-sm leading-6 text-white/55">{item.summary}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {item.tags.map((tag) => <span key={tag} className="border border-white/10 px-2 py-1 text-xs text-white/48">{tag}</span>)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function getInitialDemoValues(fields) {
+  return fields.reduce((values, field) => ({ ...values, [field.id]: field.defaultValue || (field.type === "checkboxGroup" ? [] : "") }), {});
+}
+
+function createMockDemoResult(listing, values) {
+  const focusAreas = Array.isArray(values.focusAreas) ? values.focusAreas : [];
+  return {
+    outputType: listing.demoOutputType,
+    headline: `${values.contractType || "合同"}发现 3 个优先处理风险`,
+    confidence: 89,
+    risks: [
+      {
+        level: "High",
+        clause: focusAreas.includes("付款周期") ? "付款周期" : "付款",
+        title: "付款周期偏长",
+        action: "建议把 90 日付款改为 30-45 日，并加入逾期利息或暂停服务权利。",
+      },
+      {
+        level: "High",
+        clause: focusAreas.includes("自动续约") ? "自动续约" : "续约",
+        title: "自动续约提醒不足",
+        action: "建议把提前通知窗口缩短为 30 日，并要求续约前发送明确提醒。",
+      },
+      {
+        level: "Medium",
+        clause: focusAreas.includes("责任限制") ? "责任限制" : "责任",
+        title: "间接损失责任过宽",
+        action: "建议保留数据泄露、保密违约、重大过失的责任例外。",
+      },
+    ],
+  };
+}
+
+function createMockRecommendations(feedback) {
+  const lowerFeedback = feedback.toLowerCase();
+  if (lowerFeedback.includes("文件") || lowerFeedback.includes("隐私") || lowerFeedback.includes("security")) {
+    return [fallbackListings[0], fallbackListings[2], fallbackListings[1]];
+  }
+  if (lowerFeedback.includes("付款") || lowerFeedback.includes("发票") || lowerFeedback.includes("invoice")) {
+    return [fallbackListings[1], fallbackListings[0], fallbackListings[2]];
+  }
+  return fallbackListings;
 }
 
 function CreatorInput() {
-  return <div className="space-y-6"><div className="border border-white/10 bg-black/35 p-5"><div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-white/35">Product overview</div><textarea rows={8} className="w-full resize-none bg-transparent text-[17px] leading-8 text-white/82 outline-none placeholder:text-white/22" placeholder="Describe your product in one clear paragraph..." /></div><div className="grid grid-cols-1 gap-5 md:grid-cols-2">{["Target audience", "Differentiation", "Key benefits", "Tone of voice"].map((field) => <div key={field} className="border border-white/10 bg-black/25 p-4"><div className="mb-3 text-[11px] uppercase tracking-[0.22em] text-white/32">{field}</div><input className="w-full bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={`Add ${field.toLowerCase()}...`} /></div>)}</div><div className="flex flex-wrap items-center gap-4 pt-2"><button className="border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">Generate listing</button><button className="border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">Save draft</button></div></div>;
+  const fields = ["Target users", "Use cases", "Not for", "Pricing"];
+  const demoFields = ["Demo inputs", "Demo output", "Trial limits", "Success signals"];
+
+  return (
+    <div className="space-y-6">
+      <div className="border border-white/10 bg-black/35 p-5">
+        <div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-white/35">Product overview</div>
+        <textarea rows={7} className="w-full resize-none bg-transparent text-[17px] leading-8 text-white/82 outline-none placeholder:text-white/22" placeholder="写清楚工具解决什么问题、适合谁、交付什么结果。" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        {fields.map((field) => (
+          <div key={field} className="border border-white/10 bg-black/25 p-4">
+            <div className="mb-3 text-[11px] uppercase tracking-[0.22em] text-white/32">{field}</div>
+            <input className="w-full bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={`填写 ${field.toLowerCase()}`} />
+          </div>
+        ))}
+      </div>
+
+      <div className="border border-white/10 bg-black/25 p-5">
+        <div className="mb-5 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">Demo setup</div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {demoFields.map((field) => (
+            <label key={field} className="block border border-white/10 bg-black/25 p-4">
+              <div className="mb-3 text-[11px] uppercase tracking-[0.22em] text-white/32">{field}</div>
+              <textarea rows={3} className="w-full resize-none bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={`填写 ${field.toLowerCase()}`} />
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-4 pt-2">
+        <button className="border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">Generate listing</button>
+        <button className="border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">Save draft</button>
+      </div>
+    </div>
+  );
 }
 
 function GeneratedReport() {
