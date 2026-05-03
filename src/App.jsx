@@ -132,6 +132,7 @@ const experienceListings = [
     coverImage: "/images/creator-studio-slice.svg",
     galleryImages: ["/images/creator-studio-slice.svg", "/images/market-slice.svg"],
     demoUrl: "https://example.com/short-video-agent",
+    embedUrl: "https://example.com/short-video-agent",
     targetUsers: ["独立品牌", "内容团队", "电商运营"],
     useCases: ["新品短视频", "直播预热视频", "广告脚本草稿"],
     notFor: ["自动剪辑成片", "真人拍摄服务", "投放预算管理"],
@@ -175,13 +176,19 @@ const fallbackListings = [
 
 export default function AICapabilityMarketExperience() {
   const [route, setRoute] = useState("landing");
+  const [selectedListingId, setSelectedListingId] = useState("contract-risk-scanner");
+
+  const openListing = (listingId) => {
+    setSelectedListingId(listingId);
+    setRoute("experience");
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#030303] text-[#f7efe4]">
       <AnimatePresence mode="wait">
         {route === "landing" && <LandingPage key="landing" onEnter={setRoute} />}
-        {route === "market" && <MarketPage key="market" onBack={() => setRoute("landing")} />}
-        {route === "experience" && <ExperiencePage key="experience" onBack={() => setRoute("landing")} />}
+        {route === "market" && <MarketPage key="market" onBack={() => setRoute("landing")} onOpenListing={openListing} />}
+        {route === "experience" && <ExperiencePage key="experience" selectedListingId={selectedListingId} onBack={() => setRoute("landing")} />}
         {route === "creator" && <CreatorStudioPage key="creator" onBack={() => setRoute("landing")} />}
       </AnimatePresence>
     </main>
@@ -397,65 +404,64 @@ function PageShell({ children, onBack, label, tone }) {
   );
 }
 
-function MarketPage({ onBack }) {
+function MarketPage({ onBack, onOpenListing }) {
+  const [query, setQuery] = useState("检查合同风险");
+  const normalizedQuery = query.trim().toLowerCase();
+  const matchedListings = experienceListings.filter((listing) => {
+    if (!normalizedQuery) return true;
+    const haystack = [listing.title, listing.summary, listing.category, ...listing.tags, ...listing.useCases, ...listing.requiredInputs].join(" ").toLowerCase();
+    return normalizedQuery.split(/\s+/).some((word) => haystack.includes(word)) || listing.fitScore > 80;
+  });
+
   return (
     <PageShell onBack={onBack} label="Market Page" tone="gold">
       <section className="relative overflow-hidden border-b border-white/8 pb-14 text-center">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_55%_10%,rgba(214,165,98,0.18),transparent_24%)]" />
         <p className="mb-5 text-[11px] uppercase tracking-[0.45em] text-[#d6a562]/85">AI CAPABILITY MARKET</p>
         <h1 className="font-serif text-[clamp(88px,13vw,220px)] leading-[0.86] tracking-[-0.075em] text-[#fff6ea]">Market</h1>
-        <p className="mt-5 font-serif text-[clamp(20px,2.1vw,34px)] text-white/72">Describe a goal. Find AI capability.</p>
+        <p className="mt-5 font-serif text-[clamp(20px,2.1vw,34px)] text-white/72">输入需求，找到 AI 工具。</p>
         <div className="relative mx-auto mt-10 max-w-[760px] rounded-[40px] border border-[#d7b182]/25 bg-black/35 px-7 py-5 shadow-[0_0_40px_rgba(214,165,98,0.08)] backdrop-blur-md">
           <div className="flex items-center gap-4">
             <Search className="h-5 w-5 shrink-0 text-white/70" />
-            <input className="w-full bg-transparent text-lg text-white/85 outline-none placeholder:text-white/28" placeholder="Describe your goal..." />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent text-lg text-white/85 outline-none placeholder:text-white/28" placeholder="输入需求" />
             <button className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-[#d7b182]/35 text-white/80 transition hover:border-[#d7b182]/70 hover:bg-white/5" aria-label="Search">
               <ArrowRight className="h-5 w-5" />
             </button>
           </div>
         </div>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-white/45">
-          <span className="text-[#d7b182]/90">Try:</span><span>Forecast customer churn</span><span>Automate document analysis</span><span>Personalize marketing</span>
+          <span className="text-[#d7b182]/90">试试:</span><button onClick={() => setQuery("检查合同风险")}>检查合同风险</button><button onClick={() => setQuery("生成短视频脚本")}>生成短视频脚本</button><button onClick={() => setQuery("处理发票争议")}>处理发票争议</button>
         </div>
       </section>
 
       <section className="mt-12 grid grid-cols-1 gap-10 xl:grid-cols-[1.55fr_.72fr]">
         <div className="border-r border-white/8 pr-0 xl:pr-10">
           <div className="mb-7 flex items-start justify-between gap-6">
-            <div><h2 className="font-serif text-[clamp(34px,3vw,56px)] leading-tight">AI-matched solutions</h2><p className="mt-2 text-white/50">Top capabilities matched to your goal.</p></div>
-            <button className="text-sm text-white/45 transition hover:text-white">Why these?</button>
+            <div><h2 className="font-serif text-[clamp(34px,3vw,56px)] leading-tight">匹配工具</h2><p className="mt-2 text-white/50">{matchedListings.length} 个结果</p></div>
+            <button className="text-sm text-white/45 transition hover:text-white">刷新</button>
           </div>
-          <div className="border-t border-white/10">
-            {marketSolutions.map(([id, title, desc, category, complexity]) => (
-              <div key={id} className="group grid grid-cols-[48px_1fr_44px] items-start gap-4 border-b border-white/10 py-8 transition hover:bg-white/[0.015] md:grid-cols-[56px_1.35fr_.55fr_.55fr_52px] md:gap-6">
-                <div className="pt-2 font-serif text-[34px] leading-none text-white/55">{id}</div>
-                <div><h3 className="font-serif text-[clamp(28px,2.2vw,42px)] leading-tight text-[#fff6ea] transition group-hover:translate-x-[2px]">{title}</h3><p className="mt-3 max-w-[680px] text-[15px] leading-7 text-white/55">{desc}</p></div>
-                <Meta className="col-start-2 md:col-auto" label="Category" value={category} />
-                <Meta className="col-start-2 md:col-auto" label="Complexity" value={complexity} />
-                <button className="col-start-3 row-start-1 mt-1 grid h-11 w-11 place-items-center rounded-full border border-[#d7b182]/28 text-white/70 transition group-hover:border-[#d7b182]/60 group-hover:text-white md:col-auto md:row-auto md:h-12 md:w-12" aria-label={`Add ${title}`}>
-                  <Plus className="h-5 w-5" />
-                </button>
-              </div>
+          <div className="grid grid-cols-1 gap-5">
+            {matchedListings.map((listing) => (
+              <MarketListingCard key={listing.id} listing={listing} onOpen={() => onOpenListing(listing.id)} />
             ))}
           </div>
         </div>
         <aside className="border border-white/10 bg-white/[0.015] p-8">
-          <h3 className="font-serif text-[clamp(30px,2.3vw,46px)] leading-tight">Your selections</h3>
-          <p className="mt-2 text-white/45">Capabilities you’ve selected.</p>
+          <h3 className="font-serif text-[clamp(30px,2.3vw,46px)] leading-tight">已选工具</h3>
+          <p className="mt-2 text-white/45">进入体验前先加入对比。</p>
           <div className="mt-7 border-t border-white/10">
-            {["Predictive Intelligence", "Anomaly Detection", "Intelligent Automation"].map((title) => (
-              <div key={title} className="flex items-start justify-between border-b border-white/10 py-6"><div><div className="font-serif text-[28px] leading-tight text-[#fff6ea]">{title}</div><div className="mt-2 text-white/45">Selected capability</div></div><button className="text-white/40 transition hover:text-white" aria-label={`Remove ${title}`}><X className="h-5 w-5" /></button></div>
+            {experienceListings.map((listing) => (
+              <div key={listing.id} className="flex items-start justify-between border-b border-white/10 py-6"><div><div className="font-serif text-[28px] leading-tight text-[#fff6ea]">{listing.title}</div><div className="mt-2 text-white/45">{listing.listingMode === "controlled" ? "受控试用" : "快速上架"}</div></div><button className="text-white/40 transition hover:text-white" aria-label={`Remove ${listing.title}`}><X className="h-5 w-5" /></button></div>
             ))}
           </div>
-          <button className="mt-8 flex w-full items-center justify-between border border-[#d7b182]/35 px-6 py-5 text-left text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]"><span>Compare selections</span><ArrowRight className="h-5 w-5" /></button>
+          <button onClick={() => onOpenListing(experienceListings[0].id)} className="mt-8 flex w-full items-center justify-between border border-[#d7b182]/35 px-6 py-5 text-left text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]"><span>进入体验</span><ArrowRight className="h-5 w-5" /></button>
         </aside>
       </section>
     </PageShell>
   );
 }
 
-function ExperiencePage({ onBack }) {
-  const [selectedListingId, setSelectedListingId] = useState("contract-risk-scanner");
+function ExperiencePage({ selectedListingId = "contract-risk-scanner", onBack }) {
   const listing = experienceListings.find((item) => item.id === selectedListingId) || experienceListings[0];
   const demoFields = listing.trialConfig?.inputSchema || [];
   const [need, setNeed] = useState("我需要快速检查供应商合同里的付款、自动续约和责任限制风险。");
@@ -506,15 +512,7 @@ function ExperiencePage({ onBack }) {
           <h1 className="font-serif text-[clamp(58px,9.2vw,150px)] leading-[0.9] tracking-[-0.065em] text-[#fff6ea]">{listing.title}</h1>
           <p className="mx-auto mt-6 max-w-[760px] font-serif text-[clamp(20px,2vw,32px)] leading-tight text-white/72">{listing.summary}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            {experienceListings.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setSelectedListingId(item.id)}
-                className={`border px-4 py-2 text-sm transition ${item.id === listing.id ? "border-[#7ea4ff]/55 bg-[#7ea4ff]/10 text-white" : "border-white/10 text-white/52 hover:text-white"}`}
-              >
-                {item.listingMode === "controlled" ? "受控试用" : "快速上架"} · {item.title}
-              </button>
-            ))}
+            <span className="border border-[#7ea4ff]/55 bg-[#7ea4ff]/10 px-4 py-2 text-sm text-white">{listing.listingMode === "controlled" ? "受控试用" : "快速上架"} · {listing.title}</span>
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {listing.tags.map((tag) => (
@@ -622,6 +620,37 @@ function CreatorStudioPage({ onBack }) {
 
 function Meta({ label, value, className = "" }) {
   return <div className={`pt-1 ${className}`}><div className="text-[11px] uppercase tracking-[0.24em] text-white/30">{label}</div><div className="mt-3 text-white/72">{value}</div></div>;
+}
+
+function MarketListingCard({ listing, onOpen }) {
+  return (
+    <article className="group grid grid-cols-1 overflow-hidden border border-white/10 bg-white/[0.015] transition hover:border-white/18 hover:bg-white/[0.025] lg:grid-cols-[260px_1fr]">
+      <div className="relative min-h-[220px] overflow-hidden bg-black">
+        <img src={listing.coverImage} alt={`${listing.title} cover`} className="h-full w-full object-cover opacity-62 brightness-75 transition duration-500 group-hover:scale-105" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,.74)_100%)]" />
+        <div className="absolute left-4 top-4 border border-white/10 bg-black/35 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white/52">{listing.listingMode === "controlled" ? "受控试用" : "快速上架"}</div>
+      </div>
+      <div className="p-6">
+        <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+          <div>
+            <div className="text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">{listing.category}</div>
+            <h3 className="mt-3 font-serif text-[clamp(32px,3vw,54px)] leading-tight text-[#fff6ea]">{listing.title}</h3>
+            <p className="mt-4 max-w-[720px] text-[15px] leading-7 text-white/58">{listing.summary}</p>
+          </div>
+          <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full border-4 border-[#7ea4ff]/45 text-[28px] font-light text-white">{listing.fitScore}</div>
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">
+          {listing.tags.map((tag) => <span key={tag} className="border border-white/10 px-3 py-2 text-sm text-white/56">{tag}</span>)}
+        </div>
+        <div className="mt-6 flex flex-wrap items-center gap-4">
+          <button onClick={onOpen} className="inline-flex items-center gap-3 border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">
+            进入体验 <ArrowRight className="h-5 w-5" />
+          </button>
+          <span className="text-sm text-white/42">{listing.pricingText}</span>
+        </div>
+      </div>
+    </article>
+  );
 }
 
 function HeroMetric({ label, value }) {
@@ -740,14 +769,32 @@ function ControlledExperiencePanel({
 }
 
 function BasicExperiencePanel({ listing, openWork, contactCreator, status, feedback, setFeedback, submitFeedback, recommendations }) {
+  const embedSrc = listing.embedUrl || listing.demoUrl;
+
   return (
     <section className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
       <div className="mb-8 border-b border-white/10 pb-7">
         <div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">快速上架</div>
-        <h3 className="mt-3 font-serif text-[clamp(30px,2.4vw,46px)] leading-tight">打开作品</h3>
+        <h3 className="mt-3 font-serif text-[clamp(30px,2.4vw,46px)] leading-tight">体验作品</h3>
       </div>
 
-      <div className="border border-white/10 bg-black/25 p-5">
+      <div className="overflow-hidden border border-white/10 bg-black">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+          <div className="truncate text-sm text-white/48">{embedSrc}</div>
+          <a href={listing.demoUrl} target="_blank" rel="noreferrer" onClick={openWork} className="ml-4 shrink-0 text-sm text-[#dce6ff] transition hover:text-white">打开作品</a>
+        </div>
+        <div className="h-[520px] bg-[#050505]">
+          <iframe
+            title={`${listing.title} demo`}
+            src={embedSrc}
+            className="h-full w-full border-0 bg-white"
+            loading="lazy"
+            sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads"
+          />
+        </div>
+      </div>
+
+      <div className="mt-7 border border-white/10 bg-black/25 p-5">
         <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-white/35">作品链接</div>
         <div className="break-all font-serif text-[clamp(22px,1.8vw,32px)] leading-tight text-[#fff6ea]">{listing.demoUrl}</div>
       </div>
