@@ -5,9 +5,13 @@ import {
   ArrowLeft,
   ArrowRight,
   Bookmark,
+  ChevronDown,
   Check,
   CheckCircle2,
+  ExternalLink,
   FileText,
+  Image,
+  LockKeyhole,
   MessageSquare,
   Plus,
   RotateCcw,
@@ -53,61 +57,97 @@ const marketSolutions = [
   ["04", "Anomaly Detection", "Identify outliers and emerging patterns before they impact your business.", "Monitoring", "Intermediate"],
 ];
 
-const experienceListing = {
-  id: "contract-risk-scanner",
-  title: "Contract Risk Scanner",
-  summary: "粘贴合同，查看风险条款、严重程度和修改建议。",
-  category: "Legal Ops",
-  tags: ["Contract Review", "Risk Scan", "Bilingual"],
-  targetUsers: ["创业团队", "采购负责人", "法务助理"],
-  useCases: ["供应商合同初筛", "服务协议复核", "付款条款检查"],
-  notFor: ["替代律师意见", "扫描版图片合同", "诉讼策略判断"],
-  requiredInputs: ["合同文本", "合同类型", "关注风险"],
-  outputs: ["风险条款", "严重程度", "修改建议"],
-  demoLimits: "免费试用最多处理 1,200 字。",
-  fitScore: 92,
-  fitCriteria: {
-    matches: ["需要快速发现合同风险", "合同文本可直接粘贴", "关注付款、违约、续约条款"],
-    gaps: ["不能替代正式法律意见", "图片扫描件需要先转文字"],
-    nextStep: "粘贴合同片段，优先选择你最关心的风险。",
+const experienceListings = [
+  {
+    id: "contract-risk-scanner",
+    listingMode: "controlled",
+    title: "Contract Risk Scanner",
+    summary: "粘贴合同，查看风险条款、严重程度和修改建议。",
+    category: "Legal Ops",
+    tags: ["Contract Review", "Risk Scan", "Bilingual"],
+    coverImage: "/images/experience-slice.svg",
+    galleryImages: ["/images/experience-slice.svg", "/images/market-slice.svg", "/images/creator-studio-slice.svg"],
+    demoUrl: "",
+    targetUsers: ["创业团队", "采购负责人", "法务助理"],
+    useCases: ["供应商合同初筛", "服务协议复核", "付款条款检查"],
+    notFor: ["替代律师意见", "扫描版图片合同", "诉讼策略判断"],
+    requiredInputs: ["合同文本", "合同类型", "关注风险"],
+    outputs: ["风险条款", "严重程度", "修改建议"],
+    demoLimits: "每日 3 次试用",
+    fitScore: 92,
+    fitCriteria: {
+      matches: ["需要快速发现合同风险", "合同文本可直接粘贴", "关注付款、违约、续约条款"],
+      gaps: ["不能替代正式法律意见", "图片扫描件需要先转文字"],
+      nextStep: "粘贴合同片段，优先选择你最关心的风险。",
+    },
+    pricingText: "$19 / scan",
+    creatorContact: "legalops@ai-market.demo",
+    trialConfig: {
+      endpoint: "https://api.creator-demo.local/contract-scan",
+      method: "POST",
+      trialLimit: "3 / day",
+      resultType: "risk-list",
+      inputSchema: [
+        {
+          id: "contractText",
+          label: "合同文本",
+          type: "textarea",
+          required: true,
+          rows: 8,
+          placeholder: "粘贴合同核心条款，例如付款、违约、终止、续约、保密条款。",
+          defaultValue:
+            "供应商应在收到发票后 90 日内付款。若客户未提前 60 日书面通知，本协议将自动续约 12 个月。供应商可在服务中断时不承担间接损失责任。",
+        },
+        {
+          id: "contractType",
+          label: "合同类型",
+          type: "select",
+          options: ["供应商合同", "SaaS 服务协议", "采购协议", "保密协议"],
+          defaultValue: "供应商合同",
+        },
+        {
+          id: "focusAreas",
+          label: "关注风险",
+          type: "checkboxGroup",
+          options: ["付款周期", "自动续约", "责任限制", "数据隐私"],
+          defaultValue: ["付款周期", "自动续约", "责任限制"],
+        },
+        {
+          id: "referenceFile",
+          label: "合同附件",
+          type: "file",
+          accept: ".pdf,.doc,.docx,.txt",
+          placeholder: "上传合同文件",
+        },
+      ],
+    },
   },
-  pricingText: "$19 / scan",
-  creatorContact: "legalops@ai-market.demo",
-  demoOutputType: "risk-list",
-  demoFields: [
-    {
-      id: "contractText",
-      label: "合同文本",
-      type: "textarea",
-      required: true,
-      rows: 8,
-      placeholder: "粘贴合同核心条款，例如付款、违约、终止、续约、保密条款。",
-      defaultValue:
-        "供应商应在收到发票后 90 日内付款。若客户未提前 60 日书面通知，本协议将自动续约 12 个月。供应商可在服务中断时不承担间接损失责任。",
+  {
+    id: "short-video-script-agent",
+    listingMode: "basic",
+    title: "Short Video Script Agent",
+    summary: "输入产品和人群，打开作品生成短视频脚本。",
+    category: "Creative Ops",
+    tags: ["Video Script", "TikTok", "Campaign"],
+    coverImage: "/images/creator-studio-slice.svg",
+    galleryImages: ["/images/creator-studio-slice.svg", "/images/market-slice.svg"],
+    demoUrl: "https://example.com/short-video-agent",
+    targetUsers: ["独立品牌", "内容团队", "电商运营"],
+    useCases: ["新品短视频", "直播预热视频", "广告脚本草稿"],
+    notFor: ["自动剪辑成片", "真人拍摄服务", "投放预算管理"],
+    requiredInputs: ["产品卖点", "目标人群", "发布平台"],
+    outputs: ["脚本结构", "开头钩子", "分镜提示"],
+    demoLimits: "打开作品试用",
+    fitScore: 86,
+    fitCriteria: {
+      matches: ["需要快速产出脚本方向", "已有产品卖点", "想测试多个创意角度"],
+      gaps: ["不直接生成成片", "不替代投放策略"],
+      nextStep: "准备产品卖点，打开作品生成第一版脚本。",
     },
-    {
-      id: "contractType",
-      label: "合同类型",
-      type: "select",
-      options: ["供应商合同", "SaaS 服务协议", "采购协议", "保密协议"],
-      defaultValue: "供应商合同",
-    },
-    {
-      id: "focusAreas",
-      label: "关注风险",
-      type: "checkboxGroup",
-      options: ["付款周期", "自动续约", "责任限制", "数据隐私"],
-      defaultValue: ["付款周期", "自动续约", "责任限制"],
-    },
-    {
-      id: "referenceFile",
-      label: "合同附件",
-      type: "file",
-      accept: ".pdf,.doc,.docx,.txt",
-      placeholder: "上传合同文件",
-    },
-  ],
-};
+    pricingText: "$12 / pack",
+    creatorContact: "creator@ai-market.demo",
+  },
+];
 
 const fallbackListings = [
   {
@@ -415,13 +455,23 @@ function MarketPage({ onBack }) {
 }
 
 function ExperiencePage({ onBack }) {
-  const listing = experienceListing;
+  const [selectedListingId, setSelectedListingId] = useState("contract-risk-scanner");
+  const listing = experienceListings.find((item) => item.id === selectedListingId) || experienceListings[0];
+  const demoFields = listing.trialConfig?.inputSchema || [];
   const [need, setNeed] = useState("我需要快速检查供应商合同里的付款、自动续约和责任限制风险。");
-  const [demoValues, setDemoValues] = useState(() => getInitialDemoValues(listing.demoFields));
+  const [demoValues, setDemoValues] = useState(() => getInitialDemoValues(demoFields));
   const [demoResult, setDemoResult] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [recommendations, setRecommendations] = useState([]);
   const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    setDemoValues(getInitialDemoValues(demoFields));
+    setDemoResult(null);
+    setFeedback("");
+    setRecommendations([]);
+    setStatus("");
+  }, [selectedListingId]);
 
   const runDemo = () => {
     setDemoResult(createMockDemoResult(listing, demoValues));
@@ -429,7 +479,7 @@ function ExperiencePage({ onBack }) {
   };
 
   const resetDemo = () => {
-    setDemoValues(getInitialDemoValues(listing.demoFields));
+    setDemoValues(getInitialDemoValues(demoFields));
     setDemoResult(null);
     setFeedback("");
     setRecommendations([]);
@@ -444,6 +494,7 @@ function ExperiencePage({ onBack }) {
 
   const contactCreator = () => setStatus(`已发送给 ${listing.creatorContact}`);
   const mockPurchase = () => setStatus("模拟购买已完成");
+  const openWork = () => setStatus("已打开作品入口");
 
   return (
     <PageShell onBack={onBack} label="Experience Page" tone="blue">
@@ -454,6 +505,17 @@ function ExperiencePage({ onBack }) {
           <p className="mb-5 text-[11px] uppercase tracking-[0.45em] text-[#d6a562]/85">{listing.category}</p>
           <h1 className="font-serif text-[clamp(58px,9.2vw,150px)] leading-[0.9] tracking-[-0.065em] text-[#fff6ea]">{listing.title}</h1>
           <p className="mx-auto mt-6 max-w-[760px] font-serif text-[clamp(20px,2vw,32px)] leading-tight text-white/72">{listing.summary}</p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            {experienceListings.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setSelectedListingId(item.id)}
+                className={`border px-4 py-2 text-sm transition ${item.id === listing.id ? "border-[#7ea4ff]/55 bg-[#7ea4ff]/10 text-white" : "border-white/10 text-white/52 hover:text-white"}`}
+              >
+                {item.listingMode === "controlled" ? "受控试用" : "快速上架"} · {item.title}
+              </button>
+            ))}
+          </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {listing.tags.map((tag) => (
               <span key={tag} className="border border-white/10 bg-black/25 px-4 py-2 text-sm text-white/62">{tag}</span>
@@ -467,8 +529,10 @@ function ExperiencePage({ onBack }) {
         </div>
       </section>
 
-      <section className="mt-12 grid grid-cols-1 gap-8 xl:grid-cols-[.86fr_1.14fr]">
+      <section className="mt-12 grid grid-cols-1 gap-8 xl:grid-cols-[.82fr_1.18fr]">
         <aside className="space-y-8">
+          <WorkMedia listing={listing} />
+
           <div className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
             <div className="mb-7 flex items-start justify-between gap-6 border-b border-white/10 pb-7">
               <div>
@@ -506,46 +570,35 @@ function ExperiencePage({ onBack }) {
           </div>
         </aside>
 
-        <section className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
-          <div className="mb-8 flex flex-col gap-5 border-b border-white/10 pb-7 md:flex-row md:items-start md:justify-between">
-            <div>
-              <div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Demo</div>
-              <h3 className="mt-3 font-serif text-[clamp(30px,2.4vw,46px)] leading-tight">粘贴合同，查看风险条款</h3>
-            </div>
-            <button onClick={resetDemo} className="inline-flex w-fit items-center gap-2 text-white/40 transition hover:text-white">
-              <RotateCcw className="h-4 w-4" />重置
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 gap-5">
-            {listing.demoFields.map((field) => (
-              <DemoField key={field.id} field={field} value={demoValues[field.id]} onChange={(value) => setDemoValues((current) => ({ ...current, [field.id]: value }))} />
-            ))}
-          </div>
-
-          <div className="mt-7 flex flex-wrap items-center gap-4">
-            <button onClick={runDemo} className="inline-flex items-center gap-3 border border-[#7ea4ff]/35 px-5 py-3 text-[#dce6ff] transition hover:border-[#7ea4ff]/70 hover:bg-white/[0.03]">
-              <FileText className="h-5 w-5" />查看风险条款
-            </button>
-            <button onClick={contactCreator} className="inline-flex items-center gap-3 border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">
-              <MessageSquare className="h-5 w-5" />联系创建者
-            </button>
-            <button onClick={mockPurchase} className="inline-flex items-center gap-3 border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">
-              <ShoppingBag className="h-5 w-5" />模拟购买
-            </button>
-          </div>
-
-          {status && <div className="mt-5 border border-white/10 bg-black/25 px-4 py-3 text-sm text-white/58">{status}</div>}
-
-          <DemoResult result={demoResult} />
-
-          <FeedbackPanel
+        {listing.listingMode === "controlled" ? (
+          <ControlledExperiencePanel
+            listing={listing}
+            demoFields={demoFields}
+            demoValues={demoValues}
+            setDemoValues={setDemoValues}
+            runDemo={runDemo}
+            resetDemo={resetDemo}
+            contactCreator={contactCreator}
+            mockPurchase={mockPurchase}
+            status={status}
+            demoResult={demoResult}
             feedback={feedback}
             setFeedback={setFeedback}
-            onSubmit={submitFeedback}
+            submitFeedback={submitFeedback}
             recommendations={recommendations}
           />
-        </section>
+        ) : (
+          <BasicExperiencePanel
+            listing={listing}
+            openWork={openWork}
+            contactCreator={contactCreator}
+            status={status}
+            feedback={feedback}
+            setFeedback={setFeedback}
+            submitFeedback={submitFeedback}
+            recommendations={recommendations}
+          />
+        )}
       </section>
     </PageShell>
   );
@@ -557,11 +610,11 @@ function CreatorStudioPage({ onBack }) {
       <section className="relative overflow-hidden border-b border-white/8 pb-14 text-center">
         <p className="mb-5 text-[11px] uppercase tracking-[0.45em] text-[#d6a562]/85">CREATOR CONTROL ROOM</p>
         <h1 className="font-serif text-[clamp(76px,11vw,180px)] leading-[0.88] tracking-[-0.07em] text-[#fff6ea]">Creator Studio</h1>
-        <p className="mt-5 font-serif text-[clamp(20px,2.1vw,34px)] text-white/72">Turn a brief into a market listing.</p>
+        <p className="mt-5 font-serif text-[clamp(20px,2.1vw,34px)] text-white/72">上传作品，发布到市场。</p>
       </section>
       <section className="mt-12 grid grid-cols-1 gap-8 xl:grid-cols-[1fr_1.05fr]">
-        <div className="border border-white/10 bg-white/[0.015] p-8"><div className="mb-8"><div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Product brief</div><h2 className="mt-4 font-serif text-[clamp(32px,2.6vw,50px)] leading-tight">Input your product introduction</h2><p className="mt-4 max-w-[660px] text-[16px] leading-8 text-white/55">Describe the product, audience, differentiation, key benefits, tone, and commercial context.</p></div><CreatorInput /></div>
-        <div className="border border-white/10 bg-white/[0.015] p-8"><div className="mb-8 flex items-start justify-between gap-6 border-b border-white/10 pb-7"><div><div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Generated report</div><h2 className="mt-4 font-serif text-[clamp(32px,2.6vw,50px)] leading-tight">Listing analysis</h2><p className="mt-4 max-w-[680px] text-[16px] leading-8 text-white/55">A refined publishing view with strategic recommendations, creative direction, and listing risk checks.</p></div><div className="border border-white/10 px-4 py-3 text-center"><div className="text-[11px] uppercase tracking-[0.24em] text-white/35">Score</div><div className="mt-2 font-serif text-[42px] text-[#fff6ea]">82</div></div></div><GeneratedReport /></div>
+        <div className="border border-white/10 bg-white/[0.015] p-8"><div className="mb-8"><div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Submit work</div><h2 className="mt-4 font-serif text-[clamp(32px,2.6vw,50px)] leading-tight">上传 AI 作品</h2><p className="mt-4 max-w-[660px] text-[16px] leading-8 text-white/55">填写作品、封面、链接和价格。</p></div><CreatorInput /></div>
+        <div className="border border-white/10 bg-white/[0.015] p-8"><div className="mb-8 flex items-start justify-between gap-6 border-b border-white/10 pb-7"><div><div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">Preview</div><h2 className="mt-4 font-serif text-[clamp(32px,2.6vw,50px)] leading-tight">发布预览</h2><p className="mt-4 max-w-[680px] text-[16px] leading-8 text-white/55">检查卡片、价格、标签和试用入口。</p></div><div className="border border-white/10 px-4 py-3 text-center"><div className="text-[11px] uppercase tracking-[0.24em] text-white/35">Fit</div><div className="mt-2 font-serif text-[42px] text-[#fff6ea]">82</div></div></div><GeneratedReport /></div>
       </section>
     </PageShell>
   );
@@ -606,6 +659,124 @@ function InfoList({ title, items }) {
         ))}
       </div>
     </div>
+  );
+}
+
+function WorkMedia({ listing }) {
+  return (
+    <div className="border border-white/10 bg-white/[0.015] p-5">
+      <div className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-black">
+        <img src={listing.coverImage} alt={`${listing.title} cover`} className="h-full w-full object-cover opacity-70 blur-[1px] brightness-75" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,.72)_100%)]" />
+        <div className="absolute bottom-5 left-5 right-5">
+          <div className="mb-3 w-fit border border-white/10 bg-black/35 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-white/48">{listing.listingMode === "controlled" ? "受控试用" : "快速上架"}</div>
+          <div className="font-serif text-[clamp(30px,3vw,52px)] leading-none text-[#fff6ea]">{listing.title}</div>
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        {listing.galleryImages.map((image) => (
+          <div key={image} className="aspect-[4/3] overflow-hidden border border-white/10 bg-black">
+            <img src={image} alt="" className="h-full w-full object-cover opacity-55 brightness-75" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ControlledExperiencePanel({
+  listing,
+  demoFields,
+  demoValues,
+  setDemoValues,
+  runDemo,
+  resetDemo,
+  contactCreator,
+  mockPurchase,
+  status,
+  demoResult,
+  feedback,
+  setFeedback,
+  submitFeedback,
+  recommendations,
+}) {
+  return (
+    <section className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
+      <div className="mb-8 flex flex-col gap-5 border-b border-white/10 pb-7 md:flex-row md:items-start md:justify-between">
+        <div>
+          <div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">受控试用</div>
+          <h3 className="mt-3 font-serif text-[clamp(30px,2.4vw,46px)] leading-tight">粘贴合同，查看风险条款</h3>
+        </div>
+        <button onClick={resetDemo} className="inline-flex w-fit items-center gap-2 text-white/40 transition hover:text-white">
+          <RotateCcw className="h-4 w-4" />重置
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5">
+        {demoFields.map((field) => (
+          <DemoField key={field.id} field={field} value={demoValues[field.id]} onChange={(value) => setDemoValues((current) => ({ ...current, [field.id]: value }))} />
+        ))}
+      </div>
+
+      <div className="mt-7 flex flex-wrap items-center gap-4">
+        <button onClick={runDemo} className="inline-flex items-center gap-3 border border-[#7ea4ff]/35 px-5 py-3 text-[#dce6ff] transition hover:border-[#7ea4ff]/70 hover:bg-white/[0.03]">
+          <FileText className="h-5 w-5" />查看风险条款
+        </button>
+        <button onClick={contactCreator} className="inline-flex items-center gap-3 border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">
+          <MessageSquare className="h-5 w-5" />联系创建者
+        </button>
+        <button onClick={mockPurchase} className="inline-flex items-center gap-3 border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">
+          <ShoppingBag className="h-5 w-5" />模拟购买
+        </button>
+      </div>
+
+      {status && <div className="mt-5 border border-white/10 bg-black/25 px-4 py-3 text-sm text-white/58">{status}</div>}
+
+      <DemoResult result={demoResult} />
+
+      <FeedbackPanel feedback={feedback} setFeedback={setFeedback} onSubmit={submitFeedback} recommendations={recommendations} />
+    </section>
+  );
+}
+
+function BasicExperiencePanel({ listing, openWork, contactCreator, status, feedback, setFeedback, submitFeedback, recommendations }) {
+  return (
+    <section className="border border-white/10 bg-white/[0.015] p-6 sm:p-8">
+      <div className="mb-8 border-b border-white/10 pb-7">
+        <div className="text-[11px] uppercase tracking-[0.28em] text-[#d7b182]/85">快速上架</div>
+        <h3 className="mt-3 font-serif text-[clamp(30px,2.4vw,46px)] leading-tight">打开作品</h3>
+      </div>
+
+      <div className="border border-white/10 bg-black/25 p-5">
+        <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-white/35">作品链接</div>
+        <div className="break-all font-serif text-[clamp(22px,1.8vw,32px)] leading-tight text-[#fff6ea]">{listing.demoUrl}</div>
+      </div>
+
+      <div className="mt-7 flex flex-wrap items-center gap-4">
+        <a href={listing.demoUrl} target="_blank" rel="noreferrer" onClick={openWork} className="inline-flex items-center gap-3 border border-[#7ea4ff]/35 px-5 py-3 text-[#dce6ff] transition hover:border-[#7ea4ff]/70 hover:bg-white/[0.03]">
+          <ExternalLink className="h-5 w-5" />打开作品
+        </a>
+        <button onClick={contactCreator} className="inline-flex items-center gap-3 border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">
+          <MessageSquare className="h-5 w-5" />联系创建者
+        </button>
+      </div>
+
+      {status && <div className="mt-5 border border-white/10 bg-black/25 px-4 py-3 text-sm text-white/58">{status}</div>}
+
+      <div className="mt-8 border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,.035),rgba(255,255,255,.012))] p-6">
+        <div className="mb-4 text-[11px] uppercase tracking-[0.24em] text-[#7ea4ff]">试用前准备</div>
+        <div className="space-y-3">
+          {listing.requiredInputs.map((item) => (
+            <div key={item} className="flex gap-3 text-[15px] leading-7 text-white/62">
+              <Check className="mt-1 h-4 w-4 shrink-0 text-white/32" />
+              <span>{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <FeedbackPanel feedback={feedback} setFeedback={setFeedback} onSubmit={submitFeedback} recommendations={recommendations} />
+    </section>
   );
 }
 
@@ -790,7 +961,7 @@ function getInitialDemoValues(fields) {
 function createMockDemoResult(listing, values) {
   const focusAreas = Array.isArray(values.focusAreas) ? values.focusAreas : [];
   return {
-    outputType: listing.demoOutputType,
+    outputType: listing.trialConfig?.resultType || "mock-result",
     headline: `${values.contractType || "合同"}发现 3 个优先处理风险`,
     confidence: 89,
     risks: [
@@ -828,47 +999,95 @@ function createMockRecommendations(feedback) {
 }
 
 function CreatorInput() {
-  const fields = ["Target users", "Use cases", "Not for", "Pricing"];
-  const demoFields = ["Demo inputs", "Demo output", "Trial limits", "Success signals"];
+  const [controlledOpen, setControlledOpen] = useState(false);
+  const basicFields = [
+    ["作品名称", "例如 Contract Risk Scanner"],
+    ["适合人群", "填写 target users"],
+    ["使用场景", "填写 use cases"],
+    ["不适合", "填写 not for"],
+    ["价格", "例如 $19 / scan"],
+    ["标签", "用逗号分隔"],
+  ];
+  const apiFields = [
+    ["API 地址", "https://api.yourtool.com/demo"],
+    ["请求方式", "POST"],
+    ["鉴权密钥", "sk_..."],
+    ["试用次数", "每日 3 次"],
+    ["输入字段", "contractText, contractType, focusAreas"],
+    ["结果样式", "risk-list"],
+  ];
 
   return (
     <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-[1fr_.72fr]">
+        <label className="block border border-dashed border-[#d7b182]/30 bg-black/25 p-5 transition hover:border-[#d7b182]/55">
+          <input type="file" accept="image/*" className="hidden" />
+          <div className="flex min-h-[210px] flex-col items-center justify-center text-center">
+            <Image className="mb-5 h-9 w-9 text-[#d7b182]/80" />
+            <div className="font-serif text-[32px] leading-tight text-[#fff6ea]">上传封面</div>
+            <div className="mt-3 text-sm text-white/42">至少 1 张</div>
+          </div>
+        </label>
+        <label className="block border border-dashed border-white/15 bg-black/20 p-5 transition hover:border-[#7ea4ff]/45">
+          <input type="file" accept="image/*" multiple className="hidden" />
+          <div className="flex h-full min-h-[210px] flex-col items-center justify-center text-center">
+            <Plus className="mb-5 h-9 w-9 text-white/46" />
+            <div className="font-serif text-[28px] leading-tight text-[#fff6ea]">添加展示图</div>
+            <div className="mt-3 text-sm text-white/42">截图、海报、结果预览</div>
+          </div>
+        </label>
+      </div>
+
       <div className="border border-white/10 bg-black/35 p-5">
-        <div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-white/35">Product overview</div>
+        <div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-white/35">作品介绍</div>
         <textarea rows={7} className="w-full resize-none bg-transparent text-[17px] leading-8 text-white/82 outline-none placeholder:text-white/22" placeholder="写清楚工具解决什么问题、适合谁、交付什么结果。" />
       </div>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        {fields.map((field) => (
+        {basicFields.map(([field, placeholder]) => (
           <div key={field} className="border border-white/10 bg-black/25 p-4">
             <div className="mb-3 text-[11px] uppercase tracking-[0.22em] text-white/32">{field}</div>
-            <input className="w-full bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={`填写 ${field.toLowerCase()}`} />
+            <input className="w-full bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={placeholder} />
           </div>
         ))}
       </div>
 
       <div className="border border-white/10 bg-black/25 p-5">
-        <div className="mb-5 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">Demo setup</div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          {demoFields.map((field) => (
-            <label key={field} className="block border border-white/10 bg-black/25 p-4">
-              <div className="mb-3 text-[11px] uppercase tracking-[0.22em] text-white/32">{field}</div>
-              <textarea rows={3} className="w-full resize-none bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={`填写 ${field.toLowerCase()}`} />
-            </label>
-          ))}
-        </div>
+        <div className="mb-3 text-[11px] uppercase tracking-[0.24em] text-[#d7b182]/85">快速上架</div>
+        <input className="w-full bg-transparent text-[17px] text-white/82 outline-none placeholder:text-white/22" placeholder="填写作品链接" />
+      </div>
+
+      <div className="border border-white/10 bg-black/25">
+        <button
+          type="button"
+          onClick={() => setControlledOpen((value) => !value)}
+          className="flex w-full items-center justify-between gap-4 p-5 text-left"
+        >
+          <span className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-[#7ea4ff]"><LockKeyhole className="h-5 w-5" />开启受控试用</span>
+          <ChevronDown className={`h-5 w-5 text-white/42 transition ${controlledOpen ? "rotate-180" : ""}`} />
+        </button>
+        {controlledOpen && (
+          <div className="grid grid-cols-1 gap-5 border-t border-white/10 p-5 md:grid-cols-2">
+            {apiFields.map(([field, placeholder]) => (
+              <label key={field} className="block border border-white/10 bg-black/25 p-4">
+                <div className="mb-3 text-[11px] uppercase tracking-[0.22em] text-white/32">{field}</div>
+                <input className="w-full bg-transparent text-white/80 outline-none placeholder:text-white/22" placeholder={placeholder} />
+              </label>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-wrap items-center gap-4 pt-2">
-        <button className="border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">Generate listing</button>
-        <button className="border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">Save draft</button>
+        <button className="border border-[#d7b182]/35 px-5 py-3 text-[#f0dcc0] transition hover:border-[#d7b182]/65 hover:bg-white/[0.02]">保存作品</button>
+        <button className="border border-white/10 px-5 py-3 text-white/70 transition hover:bg-white/[0.03] hover:text-white">预览卡片</button>
       </div>
     </div>
   );
 }
 
 function GeneratedReport() {
-  return <div className="space-y-7"><ReportBlock title="Suggested title">AI Workflow Assistant for Modern Teams</ReportBlock><ReportBlock title="Short description">Save hours and ship faster with an intelligent workflow assistant designed to streamline repetitive decisions and help teams move from intent to execution with clarity.</ReportBlock><ReportBlock title="Recommended tags"><div className="flex flex-wrap gap-3">{["Productivity", "Workflow", "Automation", "SaaS", "Operations"].map((tag) => <span key={tag} className="border border-white/10 px-3 py-2 text-sm text-white/62">{tag}</span>)}</div></ReportBlock><div className="grid grid-cols-1 gap-5 md:grid-cols-2"><ReportBlock title="Pricing suggestion">$29–49 / seat / month</ReportBlock><ReportBlock title="Positioning">Strong relevance for startup operators, growth teams, and lean internal ops.</ReportBlock></div><ReportBlock title="Risk reminders"><ul className="space-y-3 text-white/62"><li>• Avoid overclaiming autonomous capabilities without scope clarification.</li><li>• Clarify data handling and privacy posture in the final listing.</li><li>• Support “time saved” claims with a real benchmark or case example.</li></ul></ReportBlock></div>;
+  return <div className="space-y-7"><ReportBlock title="作品名称">Contract Risk Scanner</ReportBlock><ReportBlock title="卡片描述">粘贴合同，查看风险条款、严重程度和修改建议。</ReportBlock><ReportBlock title="推荐标签"><div className="flex flex-wrap gap-3">{["Legal Ops", "Contract Review", "Risk Scan", "Bilingual"].map((tag) => <span key={tag} className="border border-white/10 px-3 py-2 text-sm text-white/62">{tag}</span>)}</div></ReportBlock><div className="grid grid-cols-1 gap-5 md:grid-cols-2"><ReportBlock title="价格">$19 / scan</ReportBlock><ReportBlock title="试用入口">受控试用</ReportBlock></div><ReportBlock title="发布前检查"><ul className="space-y-3 text-white/62"><li>上传封面。</li><li>填写作品链接。</li><li>检查价格和标签。</li></ul></ReportBlock></div>;
 }
 
 function ReportBlock({ title, children }) {
